@@ -16,6 +16,7 @@ target_link_libraries( exchcxx PUBLIC SYCL::SYCL )
 
 # --- AoT-builds SYCL target alias pass-through ---
 set(_EXCHCXX_SYCL_ALLOWED
+  spir64_gen
   intel_gpu_pvc
   nvidia_gpu_sm_80
   nvidia_gpu_sm_90
@@ -60,3 +61,9 @@ if( EXCHCXX_SYCL_HAS_NO_EARLY_OPTIMIZATIONS )
     $<$<COMPILE_LANGUAGE:CXX>: -fno-sycl-early-optimizations>
   )
 endif()
+
+
+target_link_options(exchcxx PRIVATE
+  "SHELL:-fsycl-targets=spir64_gen"
+  "SHELL:-Xsycl-target-backend \"-device pvc\""
+)

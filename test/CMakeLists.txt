@@ -28,5 +28,15 @@ add_executable( xc_functional_test xc_functional_test.cxx reference_values.cxx )
 target_link_libraries( xc_functional_test PUBLIC exchcxx catch2_main )
 target_compile_features( xc_functional_test PRIVATE cxx_std_17 )
 
+target_link_options(xc_kernel_test PRIVATE
+  "SHELL:-fsycl-targets=spir64_gen"
+  "SHELL:-Xsycl-target-backend \"-device pvc\""
+)
+target_link_options(xc_functional_test PRIVATE
+  "SHELL:-fsycl-targets=spir64_gen"
+  "SHELL:-Xsycl-target-backend \"-device pvc\""
+)
+
+
 add_test( NAME XC_KERNEL     COMMAND xc_kernel_test     )
 add_test( NAME XC_FUNCTIONAL COMMAND xc_functional_test )
