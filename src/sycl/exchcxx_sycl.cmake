@@ -15,55 +15,94 @@ target_link_libraries( exchcxx PUBLIC SYCL::SYCL )
 
 
 # --- AoT-builds SYCL target alias pass-through ---
+# User-facing aliases
 set(_EXCHCXX_SYCL_ALLOWED
-  spir64_gen
   intel_gpu_pvc
   nvidia_gpu_sm_80
   nvidia_gpu_sm_90
   amd_gpu_gfx90a
   amd_gpu_gfx942
 )
+
 if(DEFINED EXCHCXX_SYCL_TARGET AND NOT EXCHCXX_SYCL_TARGET STREQUAL "")
   list(FIND _EXCHCXX_SYCL_ALLOWED "${EXCHCXX_SYCL_TARGET}" _exchcxx_sycl_idx)
   if(_exchcxx_sycl_idx EQUAL -1)
-    message(FATAL_ERROR "Invalid EXCHCXX_SYCL_TARGET='${EXCHCXX_SYCL_TARGET}'. " "Allowed values: ${_EXCHCXX_SYCL_ALLOWED}")
+    message(FATAL_ERROR
+      "Invalid EXCHCXX_SYCL_TARGET='${EXCHCXX_SYCL_TARGET}'. "
+      "Allowed values: ${_EXCHCXX_SYCL_ALLOWED}")
   endif()
 
-  target_compile_options( exchcxx PRIVATE -fsycl-targets=${EXCHCXX_SYCL_TARGET} )
-  target_link_options( exchcxx PRIVATE -fsycl-targets=${EXCHCXX_SYCL_TARGET} )
+  unset(_exchcxx_sycl_compile_opts)
+  unset(_exchcxx_sycl_link_opts)
+
+  if(EXCHCXX_SYCL_TARGET STREQUAL "intel_gpu_pvc")
+    list(APPEND _exchcxx_sycl_compile_opts
+      -fsycl-default-sub-group-size=32
+      -fsycl-targets=spir64_gen
+      "SHELL:-Xsycl-target-backend \"-device pvc\""
+    )
+    list(APPEND _exchcxx_sycl_link_opts
+      "SHELL:-ftarget-register-alloc-mode=pvc:large"
+      "SHELL:-fsycl-targets=spir64_gen"
+      "SHELL:-Xsycl-target-backend \"-device pvc\""
+    )
+  endif()
+
+  target_compile_options(exchcxx PRIVATE
+    $<$<COMPILE_LANGUAGE:CXX>:${_exchcxx_sycl_compile_opts}>
+  )
+  target_link_options(exchcxx PRIVATE
+    ${_exchcxx_sycl_link_opts}
+  )
+
   message(STATUS "ExchCXX SYCL AoT enabled for target: ${EXCHCXX_SYCL_TARGET}")
 endif()
 
 
-target_compile_options(exchcxx PRIVATE  $<$<COMPILE_LANGUAGE:CXX>:-ffp-model=precise>)
-target_link_options(exchcxx PRIVATE -fsycl-max-parallel-link-jobs=20)
-
 include(CheckCXXCompilerFlag)
 check_cxx_compiler_flag("-fno-sycl-id-queries-fit-in-int"     EXCHCXX_SYCL_ID_QUERIES_FIT_IN_INT )
-check_cxx_compiler_flag("-fsycl-device-code-split=per_source" EXCHCXX_SYCL_DEVICE_CODE_SPLIT_PER_SOURCE )
-check_cxx_compiler_flag("-fno-sycl-early-optimizations"       EXCHCXX_SYCL_HAS_NO_EARLY_OPTIMIZATIONS )
+check_cxx_compiler_flag("-fsycl-device-code-split=per_kernel" EXCHCXX_SYCL_DEVICE_CODE_SPLIT_PER_KERNEL )
+check_cxx_compiler_flag("-Xsycl-target-frontend \"-fp-model=precise\"" EXCHCXX_HAVE_SYCL_TARGET_FRONTEND_FP_MODEL_PRECISE )
 
 
-if( EXCHCXX_SYCL_ID_QUERIES_FIT_IN_INT )
-  target_compile_options( exchcxx PRIVATE
-    $<$<COMPILE_LANGUAGE:CXX>: -fno-sycl-id-queries-fit-in-int>
+include(CheckLinkerFlag)
+check_linker_flag(CXX "-flink-huge-device-code"          EXCHCXX_SYCL_LINK_HUGE_DEVICE_CODE)
+check_linker_flag(CXX "--offload-compress"               EXCHCXX_SYCL_OFFLOAD_COMPRESS)
+check_linker_flag(CXX "-fsycl-max-parallel-link-jobs=16" EXCHCXX_SYCL_MAX_PARALLEL_LINK_JOBS)
+
+
+if(EXCHCXX_SYCL_ID_QUERIES_FIT_IN_INT)
+  target_compile_options(exchcxx PRIVATE
+    $<$<COMPILE_LANGUAGE:CXX>:-fno-sycl-id-queries-fit-in-int>
   )
 endif()
 
-if( EXCHCXX_SYCL_DEVICE_CODE_SPLIT_PER_SOURCE )
-  target_compile_options( exchcxx PRIVATE
-    $<$<COMPILE_LANGUAGE:CXX>: -fsycl-device-code-split=per_source>
+if(EXCHCXX_SYCL_DEVICE_CODE_SPLIT_PER_KERNEL)
+  target_compile_options(exchcxx PRIVATE
+    $<$<COMPILE_LANGUAGE:CXX>:-fsycl-device-code-split=per_kernel>
   )
 endif()
 
-if( EXCHCXX_SYCL_HAS_NO_EARLY_OPTIMIZATIONS )
-  target_compile_options( exchcxx PRIVATE
-    $<$<COMPILE_LANGUAGE:CXX>: -fno-sycl-early-optimizations>
+if(EXCHCXX_HAVE_SYCL_TARGET_FRONTEND_FP_MODEL_PRECISE)
+  target_compile_options(exchcxx PRIVATE
+    "$<$<COMPILE_LANGUAGE:CXX>:SHELL:-Xsycl-target-frontend -fp-model=precise>"
   )
 endif()
 
+if(EXCHCXX_SYCL_LINK_HUGE_DEVICE_CODE)
+  target_link_options(exchcxx PRIVATE
+    $<$<LINK_LANGUAGE:CXX>:-flink-huge-device-code>
+  )
+endif()
 
-target_link_options(exchcxx PRIVATE
-  "SHELL:-fsycl-targets=spir64_gen"
-  "SHELL:-Xsycl-target-backend \"-device pvc\""
-)
+if(EXCHCXX_SYCL_OFFLOAD_COMPRESS)
+  target_link_options(exchcxx PRIVATE
+    $<$<LINK_LANGUAGE:CXX>:--offload-compress>
+  )
+endif()
+
+if(EXCHCXX_SYCL_MAX_PARALLEL_LINK_JOBS)
+  target_link_options(exchcxx PRIVATE
+    $<$<LINK_LANGUAGE:CXX>:-fsycl-max-parallel-link-jobs=16>
+  )
+endif()

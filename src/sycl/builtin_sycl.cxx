@@ -1268,7 +1268,7 @@ LDA_EXC_GENERATOR_DEVICE( device_eval_exc_helper_unpolar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_exc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_exc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_exc_helper_unpolar_kernel<KernelType>(
             N, rho, eps);
     });
@@ -1280,7 +1280,7 @@ LDA_EXC_GENERATOR_DEVICE( device_eval_exc_helper_polar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_exc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_exc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_exc_helper_polar_kernel<KernelType>(
             N, rho, eps);
     });
@@ -1292,7 +1292,7 @@ LDA_EXC_VXC_GENERATOR_DEVICE( device_eval_exc_vxc_helper_unpolar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_exc_vxc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_exc_vxc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_exc_vxc_helper_unpolar_kernel<KernelType>(
             N, rho, eps, vxc);
     });
@@ -1304,7 +1304,7 @@ LDA_EXC_VXC_GENERATOR_DEVICE( device_eval_exc_vxc_helper_polar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_exc_vxc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_exc_vxc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_exc_vxc_helper_polar_kernel<KernelType>(
             N, rho, eps, vxc);
     });
@@ -1316,7 +1316,7 @@ LDA_FXC_GENERATOR_DEVICE( device_eval_fxc_helper_unpolar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_fxc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_fxc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_fxc_helper_unpolar_kernel<KernelType>(
             N, rho, fxc);
     });
@@ -1328,7 +1328,7 @@ LDA_FXC_GENERATOR_DEVICE( device_eval_fxc_helper_polar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_fxc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_fxc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_fxc_helper_polar_kernel<KernelType>(
             N, rho, fxc);
     });
@@ -1339,7 +1339,7 @@ LDA_VXC_FXC_GENERATOR_DEVICE( device_eval_vxc_fxc_helper_unpolar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_vxc_fxc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_vxc_fxc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_vxc_fxc_helper_unpolar_kernel<KernelType>(
             N, rho, vxc, fxc);
     });
@@ -1351,7 +1351,7 @@ LDA_VXC_FXC_GENERATOR_DEVICE( device_eval_vxc_fxc_helper_polar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_vxc_fxc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_vxc_fxc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_vxc_fxc_helper_polar_kernel<KernelType>(
             N, rho, vxc, fxc);
     });
@@ -1363,7 +1363,7 @@ LDA_EXC_INC_GENERATOR_DEVICE( device_eval_exc_inc_helper_unpolar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_exc_inc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_exc_inc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_exc_inc_helper_unpolar_kernel<KernelType>(
             scal_fact, N, rho, eps);
     });
@@ -1375,7 +1375,7 @@ LDA_EXC_INC_GENERATOR_DEVICE( device_eval_exc_inc_helper_polar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_exc_inc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_exc_inc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_exc_inc_helper_polar_kernel<KernelType>(
             scal_fact, N, rho, eps);
     });
@@ -1387,7 +1387,7 @@ LDA_EXC_VXC_INC_GENERATOR_DEVICE( device_eval_exc_vxc_inc_helper_unpolar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_exc_vxc_inc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_exc_vxc_inc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_exc_vxc_inc_helper_unpolar_kernel<KernelType>(
             scal_fact, N, rho, eps, vxc);
     });
@@ -1399,7 +1399,7 @@ LDA_EXC_VXC_INC_GENERATOR_DEVICE( device_eval_exc_vxc_inc_helper_polar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_exc_vxc_inc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_exc_vxc_inc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_exc_vxc_inc_helper_polar_kernel<KernelType>(
             scal_fact, N, rho, eps, vxc);
     });
@@ -1411,7 +1411,7 @@ LDA_FXC_INC_GENERATOR_DEVICE( device_eval_fxc_inc_helper_unpolar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_fxc_inc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_fxc_inc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_fxc_inc_helper_unpolar_kernel<KernelType>(
             scal_fact, N, rho, fxc);
     });
@@ -1423,7 +1423,7 @@ LDA_FXC_INC_GENERATOR_DEVICE( device_eval_fxc_inc_helper_polar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_fxc_inc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_fxc_inc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_fxc_inc_helper_polar_kernel<KernelType>(
             scal_fact, N, rho, fxc);
     });
@@ -1435,7 +1435,7 @@ LDA_VXC_FXC_INC_GENERATOR_DEVICE( device_eval_vxc_fxc_inc_helper_unpolar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_vxc_fxc_inc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_vxc_fxc_inc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_vxc_fxc_inc_helper_unpolar_kernel<KernelType>(
             scal_fact, N, rho, vxc, fxc);
     });
@@ -1447,7 +1447,7 @@ LDA_VXC_FXC_INC_GENERATOR_DEVICE( device_eval_vxc_fxc_inc_helper_polar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_vxc_fxc_inc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_vxc_fxc_inc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_vxc_fxc_inc_helper_polar_kernel<KernelType>(
             scal_fact, N, rho, vxc, fxc);
     });
@@ -1462,7 +1462,7 @@ GGA_EXC_GENERATOR_DEVICE( device_eval_exc_helper_unpolar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_exc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_exc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_exc_helper_unpolar_kernel<KernelType>(
             N, rho, sigma, eps);
     });
@@ -1474,7 +1474,7 @@ GGA_EXC_GENERATOR_DEVICE( device_eval_exc_helper_polar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_exc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_exc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_exc_helper_polar_kernel<KernelType>(
             N, rho, sigma, eps);
     });
@@ -1486,7 +1486,7 @@ GGA_EXC_VXC_GENERATOR_DEVICE( device_eval_exc_vxc_helper_unpolar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_exc_vxc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_exc_vxc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_exc_vxc_helper_unpolar_kernel<KernelType>(
             N, rho, sigma, eps, vrho, vsigma);
     });
@@ -1498,7 +1498,7 @@ GGA_EXC_VXC_GENERATOR_DEVICE( device_eval_exc_vxc_helper_polar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_exc_vxc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_exc_vxc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_exc_vxc_helper_polar_kernel<KernelType>(
             N, rho, sigma, eps, vrho, vsigma);
     });
@@ -1510,7 +1510,7 @@ GGA_FXC_GENERATOR_DEVICE( device_eval_fxc_helper_unpolar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_fxc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_fxc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_fxc_helper_unpolar_kernel<KernelType>(
             N, rho, sigma, v2rho2, v2rhosigma, v2sigma2);
     });
@@ -1522,7 +1522,7 @@ GGA_FXC_GENERATOR_DEVICE( device_eval_fxc_helper_polar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_fxc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_fxc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_fxc_helper_polar_kernel<KernelType>(
             N, rho, sigma, v2rho2, v2rhosigma, v2sigma2);
     });
@@ -1534,7 +1534,7 @@ GGA_VXC_FXC_GENERATOR_DEVICE( device_eval_vxc_fxc_helper_unpolar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_vxc_fxc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_vxc_fxc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_vxc_fxc_helper_unpolar_kernel<KernelType>(
             N, rho, sigma, vrho, vsigma, v2rho2, v2rhosigma, v2sigma2);
     });
@@ -1546,7 +1546,7 @@ GGA_VXC_FXC_GENERATOR_DEVICE( device_eval_vxc_fxc_helper_polar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_vxc_fxc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_vxc_fxc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_vxc_fxc_helper_polar_kernel<KernelType>(
             N, rho, sigma, vrho, vsigma, v2rho2, v2rhosigma, v2sigma2);
     });
@@ -1558,7 +1558,7 @@ GGA_EXC_INC_GENERATOR_DEVICE( device_eval_exc_inc_helper_unpolar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_exc_inc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_exc_inc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_exc_inc_helper_unpolar_kernel<KernelType>(
             scal_fact, N, rho, sigma, eps);
     });
@@ -1570,7 +1570,7 @@ GGA_EXC_INC_GENERATOR_DEVICE( device_eval_exc_inc_helper_polar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_exc_inc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_exc_inc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_exc_inc_helper_polar_kernel<KernelType>(
             scal_fact, N, rho, sigma, eps);
     });
@@ -1582,7 +1582,7 @@ GGA_EXC_VXC_INC_GENERATOR_DEVICE( device_eval_exc_vxc_inc_helper_unpolar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_exc_vxc_inc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_exc_vxc_inc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_exc_vxc_inc_helper_unpolar_kernel<KernelType>(
             scal_fact, N, rho, sigma, eps, vrho, vsigma);
     });
@@ -1594,7 +1594,7 @@ GGA_EXC_VXC_INC_GENERATOR_DEVICE( device_eval_exc_vxc_inc_helper_polar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_exc_vxc_inc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_exc_vxc_inc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_exc_vxc_inc_helper_polar_kernel<KernelType>(
             scal_fact, N, rho, sigma, eps, vrho, vsigma);
     });
@@ -1607,7 +1607,7 @@ GGA_FXC_INC_GENERATOR_DEVICE( device_eval_fxc_inc_helper_unpolar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_fxc_inc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_fxc_inc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_fxc_inc_helper_unpolar_kernel<KernelType>(
             scal_fact, N, rho, sigma, v2rho2, v2rhosigma, v2sigma2);
     });
@@ -1618,7 +1618,7 @@ GGA_FXC_INC_GENERATOR_DEVICE( device_eval_fxc_inc_helper_polar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_fxc_inc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_fxc_inc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_fxc_inc_helper_polar_kernel<KernelType>(
             scal_fact, N, rho, sigma, v2rho2, v2rhosigma, v2sigma2);
     });
@@ -1629,7 +1629,7 @@ GGA_VXC_FXC_INC_GENERATOR_DEVICE( device_eval_vxc_fxc_inc_helper_unpolar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_vxc_fxc_inc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_vxc_fxc_inc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_vxc_fxc_inc_helper_unpolar_kernel<KernelType>(
             scal_fact, N, rho, sigma, vrho, vsigma, v2rho2, v2rhosigma, v2sigma2);
     });
@@ -1640,7 +1640,7 @@ GGA_VXC_FXC_INC_GENERATOR_DEVICE( device_eval_vxc_fxc_inc_helper_polar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_vxc_fxc_inc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_vxc_fxc_inc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_vxc_fxc_inc_helper_polar_kernel<KernelType>(
             scal_fact, N, rho, sigma, vrho, vsigma, v2rho2, v2rhosigma, v2sigma2);
     });
@@ -1652,7 +1652,7 @@ MGGA_EXC_GENERATOR_DEVICE( device_eval_exc_helper_unpolar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_exc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_exc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_exc_helper_unpolar_kernel<KernelType>(
             N, rho, sigma, lapl, tau, eps);
     });
@@ -1664,7 +1664,7 @@ MGGA_EXC_GENERATOR_DEVICE( device_eval_exc_helper_polar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_exc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_exc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_exc_helper_polar_kernel<KernelType>(
             N, rho, sigma, lapl, tau, eps);
     });
@@ -1676,7 +1676,7 @@ MGGA_EXC_VXC_GENERATOR_DEVICE( device_eval_exc_vxc_helper_unpolar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_exc_vxc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_exc_vxc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_exc_vxc_helper_unpolar_kernel<KernelType>(
             N, rho, sigma, lapl, tau, eps, vrho, vsigma, vlapl, vtau);
     });
@@ -1688,7 +1688,7 @@ MGGA_EXC_VXC_GENERATOR_DEVICE( device_eval_exc_vxc_helper_polar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_exc_vxc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_exc_vxc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_exc_vxc_helper_polar_kernel<KernelType>(
             N, rho, sigma, lapl, tau, eps, vrho, vsigma, vlapl, vtau);
     });
@@ -1700,7 +1700,7 @@ MGGA_FXC_GENERATOR_DEVICE( device_eval_fxc_helper_unpolar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_fxc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_fxc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_fxc_helper_unpolar_kernel<KernelType>(
             N, rho, sigma, lapl, tau, v2rho2, v2rhosigma, v2rholapl, v2rhotau,
             v2sigma2, v2sigmalapl, v2sigmatau, v2lapl2, v2lapltau, v2tau2);
@@ -1713,7 +1713,7 @@ MGGA_FXC_GENERATOR_DEVICE( device_eval_fxc_helper_polar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_fxc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_fxc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_fxc_helper_polar_kernel<KernelType>(
             N, rho, sigma, lapl, tau, v2rho2, v2rhosigma, v2rholapl, v2rhotau,
             v2sigma2, v2sigmalapl, v2sigmatau, v2lapl2, v2lapltau, v2tau2);
@@ -1726,7 +1726,7 @@ MGGA_VXC_FXC_GENERATOR_DEVICE( device_eval_vxc_fxc_helper_unpolar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_vxc_fxc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_vxc_fxc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_vxc_fxc_helper_unpolar_kernel<KernelType>(
             N, rho, sigma, lapl, tau, vrho, vsigma, vlapl, vtau,
             v2rho2, v2rhosigma, v2rholapl, v2rhotau,
@@ -1741,7 +1741,7 @@ MGGA_VXC_FXC_GENERATOR_DEVICE( device_eval_vxc_fxc_helper_polar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_vxc_fxc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_vxc_fxc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_vxc_fxc_helper_polar_kernel<KernelType>(
             N, rho, sigma, lapl, tau, vrho, vsigma, vlapl, vtau,
             v2rho2, v2rhosigma, v2rholapl, v2rhotau,
@@ -1756,7 +1756,7 @@ MGGA_EXC_INC_GENERATOR_DEVICE( device_eval_exc_inc_helper_unpolar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_exc_inc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_exc_inc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_exc_inc_helper_unpolar_kernel<KernelType>(
             scal_fact, N, rho, sigma, lapl, tau, eps);
     });
@@ -1768,7 +1768,7 @@ MGGA_EXC_INC_GENERATOR_DEVICE( device_eval_exc_inc_helper_polar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_exc_inc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_exc_inc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_exc_inc_helper_polar_kernel<KernelType>(
             scal_fact, N, rho, sigma, lapl, tau, eps);
     });
@@ -1780,7 +1780,7 @@ MGGA_EXC_VXC_INC_GENERATOR_DEVICE( device_eval_exc_vxc_inc_helper_unpolar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_exc_vxc_inc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_exc_vxc_inc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_exc_vxc_inc_helper_unpolar_kernel<KernelType>(
             scal_fact, N, rho, sigma, lapl, tau, eps, vrho, vsigma, vlapl, vtau);
     });
@@ -1792,7 +1792,7 @@ MGGA_EXC_VXC_INC_GENERATOR_DEVICE( device_eval_exc_vxc_inc_helper_polar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_exc_vxc_inc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_exc_vxc_inc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_exc_vxc_inc_helper_polar_kernel<KernelType>(
             scal_fact, N, rho, sigma, lapl, tau, eps, vrho, vsigma, vlapl, vtau);
     });
@@ -1804,7 +1804,7 @@ MGGA_FXC_INC_GENERATOR_DEVICE( device_eval_fxc_inc_helper_unpolar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_fxc_inc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_fxc_inc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_fxc_inc_helper_unpolar_kernel<KernelType>(
             scal_fact, N, rho, sigma, lapl, tau,
             v2rho2, v2rhosigma, v2rholapl, v2rhotau,
@@ -1819,7 +1819,7 @@ MGGA_FXC_INC_GENERATOR_DEVICE( device_eval_fxc_inc_helper_polar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_fxc_inc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_fxc_inc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_fxc_inc_helper_polar_kernel<KernelType>(
             scal_fact, N, rho, sigma, lapl, tau,
             v2rho2, v2rhosigma, v2rholapl, v2rhotau,
@@ -1834,7 +1834,7 @@ MGGA_VXC_FXC_INC_GENERATOR_DEVICE( device_eval_vxc_fxc_inc_helper_unpolar ) {
 
     sycl::range<1> threads(32);
     sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-    stream->parallel_for<class device_eval_vxc_fxc_inc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+    stream->parallel_for<class device_eval_vxc_fxc_inc_helper_unpolar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
         device_eval_vxc_fxc_inc_helper_unpolar_kernel<KernelType>(
             scal_fact, N, rho, sigma, lapl, tau,
             vrho, vsigma, vlapl, vtau,
@@ -1850,7 +1850,7 @@ MGGA_VXC_FXC_INC_GENERATOR_DEVICE( device_eval_vxc_fxc_inc_helper_polar ) {
 
   sycl::range<1> threads(32);
   sycl::range<1> blocks( util::div_ceil( N, threads[0]) );
-  stream->parallel_for<class device_eval_vxc_fxc_inc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=](auto item) [[sycl::reqd_work_group_size(32)]] {
+  stream->parallel_for<class device_eval_vxc_fxc_inc_helper_polar_kernel_name<KernelType>>( sycl::nd_range<1>(blocks * threads, threads), [=]([[maybe_unused]] auto item) [[sycl::reqd_work_group_size(32)]] {
       device_eval_vxc_fxc_inc_helper_polar_kernel<KernelType>(
           scal_fact, N, rho, sigma, lapl, tau,
           vrho, vsigma, vlapl, vtau,

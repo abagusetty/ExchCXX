@@ -89,6 +89,14 @@ else()
   set( BUILD_TESTING OFF CACHE BOOL "" FORCE )
 
   FetchContent_MakeAvailable( libxc )
+
+  #Note: Missing this would cause test failures
+  if(CMAKE_C_COMPILER_ID STREQUAL "IntelLLVM")
+    target_compile_options(xc PRIVATE
+      $<$<COMPILE_LANGUAGE:C>:-fp-model=precise>
+    )
+  endif()
+
   add_library( Libxc::xc ALIAS xc )
   target_include_directories( xc 
     PUBLIC 
