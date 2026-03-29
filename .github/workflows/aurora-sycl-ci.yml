@@ -1,0 +1,180 @@
+# .github/workflows/aurora-sycl-ci.yml
+#
+# Runs ExchCXX SYCL build + test on ALCF Aurora via SSH.
+#
+# Triggers:
+#   1. PR title contains "[SYCL]"
+#   2. "SYCL" label is added to a PR
+#   3. Manually via "Run workflow" button in GitHub Actions UI
+
+name: Aurora SYCL CI
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, labeled]
+
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch or commit SHA to test'
+        required: false
+        default: ''
+
+jobs:
+  build-and-test-aurora:
+    # Run if:
+    #   - manual trigger, OR
+    #   - PR was labeled and the label is "SYCL", OR
+    #   - PR title contains "[SYCL]" (opened, edited, or new push)
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' && github.event.action == 'labeled' && github.event.label.name == 'SYCL') ||
+      (github.event_name == 'pull_request' && github.event.action != 'labeled' && contains(github.event.pull_request.title, '[SYCL]'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Determine commit SHA
+        id: get-sha
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            SHA="${{ github.event.inputs.branch }}"
+            if [ -z "${SHA}" ]; then
+              SHA="${{ github.sha }}"
+            fi
+          else
+            SHA="${{ github.event.pull_request.head.sha }}"
+          fi
+          echo "sha=${SHA}" >> $GITHUB_OUTPUT
+          echo "Building commit: ${SHA}"
+
+      - name: Set up SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.AURORA_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -p 22 aurora.alcf.anl.gov >> ~/.ssh/known_hosts 2>/dev/null || true
+
+          cat > ~/.ssh/config << 'EOF'
+          Host aurora
+            HostName aurora.alcf.anl.gov
+            User ${{ secrets.AURORA_USERNAME }}
+            IdentityFile ~/.ssh/id_rsa
+            StrictHostKeyChecking accept-new
+            ServerAliveInterval 60
+            ServerAliveCountMax 10
+          EOF
+
+      - name: Build and test ExchCXX SYCL on Aurora
+        env:
+          ALCF_PROJECT: ${{ secrets.ALCF_PROJECT }}
+        run: |
+          COMMIT_SHA="${{ steps.get-sha.outputs.sha }}"
+
+          ssh aurora /bin/bash << REMOTE_SCRIPT
+          set -e
+
+          # ── Environment ──
+          module restore
+          module load cmake ninja
+          module list
+
+          echo "=== Environment ==="
+          which icpx && icpx --version
+          which cmake && cmake --version
+          echo "==================="
+
+          # ── Proxy for GitHub access ──
+          export http_proxy="http://proxy.alcf.anl.gov:3128"
+          export https_proxy="http://proxy.alcf.anl.gov:3128"
+
+          # ── Workspace on Lustre ──
+          WRK_DIR="/lus/flare/projects/${ALCF_PROJECT}/abagusetty/exchcxx-ci"
+          mkdir -p \${WRK_DIR}
+          cd \${WRK_DIR}
+
+          BUILD_TAG="${COMMIT_SHA:0:12}_\$(date +%Y%m%d%H%M%S)"
+          mkdir -p "\${BUILD_TAG}"
+          cd "\${BUILD_TAG}"
+
+          # ── Clone and checkout ──
+          echo "=== Cloning ExchCXX ==="
+          git clone https://github.com/wavefunction91/ExchCXX.git
+          cd ExchCXX
+          git checkout ${COMMIT_SHA}
+
+          # ── Configure ──
+          echo "=== CMake Configure ==="
+          cmake -H. -Bbuild_sycl_test_aot -G Ninja \
+            -DEXCHCXX_ENABLE_SYCL=ON \
+            -DBUILD_SHARED_LIBS=ON \
+            -DEXCHCXX_SYCL_TARGET=intel_gpu_pvc \
+            -DEXCHCXX_ENABLE_TESTS=ON \
+            -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
+            -DCMAKE_BUILD_TYPE=Release
+
+          # ── Build ──
+          echo "=== Building ==="
+          cd build_sycl_test_aot
+          time ninja -j32
+
+          # ── Test via PBS job on compute node ──
+          echo "=== Submitting test job to PBS ==="
+          cat > run_tests.pbs << 'PBS_SCRIPT'
+          #!/bin/bash
+          #PBS -A ${ALCF_PROJECT}
+          #PBS -l select=1
+          #PBS -l walltime=01:45:00
+          #PBS -l filesystems=home:flare
+          #PBS -q capacity
+          #PBS -j oe
+
+          module restore
+          module load cmake
+          module list
+
+          cd \${PBS_O_WORKDIR}
+
+          echo "Running on: \$(hostname)"
+          echo "SYCL devices:"
+          sycl-ls || true
+
+          ctest --output-on-failure -j 4
+          PBS_SCRIPT
+
+          sed -i "s/\\\${ALCF_PROJECT}/${ALCF_PROJECT}/g" run_tests.pbs
+
+          JOB_ID=\$(qsub run_tests.pbs)
+          echo "Submitted PBS job: \${JOB_ID}"
+
+          # Poll until done
+          while true; do
+            STATUS=\$(qstat -f "\${JOB_ID}" 2>/dev/null | grep job_state | awk '{print \$3}' || echo "C")
+            echo "  Job status: \${STATUS}"
+            case "\${STATUS}" in
+              C|"")
+                echo "Job completed."
+                break
+                ;;
+              *)
+                sleep 15
+                ;;
+            esac
+          done
+
+          # Check exit status
+          EXIT_CODE=\$(qstat -f "\${JOB_ID}" 2>/dev/null | grep Exit_status | awk '{print \$3}' || echo "")
+          if [ "\${EXIT_CODE}" != "0" ]; then
+            echo "=== PBS job failed (exit code: \${EXIT_CODE}) ==="
+            cat run_tests.pbs.o* 2>/dev/null || true
+            cat run_tests.pbs.e* 2>/dev/null || true
+            exit 1
+          fi
+
+          echo "=== All tests passed ==="
+          cat run_tests.pbs.o* 2>/dev/null || true
+          REMOTE_SCRIPT
+
+      - name: Cleanup SSH key
+        if: always()
+        run: rm -rf ~/.ssh/id_rsa
