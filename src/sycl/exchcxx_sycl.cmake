@@ -67,8 +67,7 @@ check_cxx_compiler_flag("-Xsycl-target-frontend \"-fp-model=precise\"" EXCHCXX_H
 
 include(CheckLinkerFlag)
 check_linker_flag(CXX "-flink-huge-device-code"          EXCHCXX_SYCL_LINK_HUGE_DEVICE_CODE)
-check_linker_flag(CXX "--offload-compress"               EXCHCXX_SYCL_OFFLOAD_COMPRESS)
-check_linker_flag(CXX "-fsycl-max-parallel-link-jobs=16" EXCHCXX_SYCL_MAX_PARALLEL_LINK_JOBS)
+check_linker_flag(CXX "-fsycl-max-parallel-link-jobs=4"  EXCHCXX_SYCL_MAX_PARALLEL_LINK_JOBS)
 
 
 if(EXCHCXX_SYCL_ID_QUERIES_FIT_IN_INT)
@@ -80,6 +79,9 @@ endif()
 if(EXCHCXX_SYCL_DEVICE_CODE_SPLIT_PER_KERNEL)
   target_compile_options(exchcxx PRIVATE
     $<$<COMPILE_LANGUAGE:CXX>:-fsycl-device-code-split=per_kernel>
+  )
+  target_link_options(exchcxx PRIVATE
+    $<$<LINK_LANGUAGE:CXX>:-fsycl-device-code-split=per_kernel>
   )
 endif()
 
@@ -95,14 +97,8 @@ if(EXCHCXX_SYCL_LINK_HUGE_DEVICE_CODE)
   )
 endif()
 
-if(EXCHCXX_SYCL_OFFLOAD_COMPRESS)
-  target_link_options(exchcxx PRIVATE
-    $<$<LINK_LANGUAGE:CXX>:--offload-compress>
-  )
-endif()
-
 if(EXCHCXX_SYCL_MAX_PARALLEL_LINK_JOBS)
   target_link_options(exchcxx PRIVATE
-    $<$<LINK_LANGUAGE:CXX>:-fsycl-max-parallel-link-jobs=16>
+    $<$<LINK_LANGUAGE:CXX>:-fsycl-max-parallel-link-jobs=4>
   )
 endif()
