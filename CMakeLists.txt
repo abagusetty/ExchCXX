@@ -81,7 +81,7 @@ else()
     # if pinning to specific SHA change the FETCHCONTENT_LIBXC_GIT_SHALLOW default to OFF, https://cmake.org/cmake/help/latest/module/ExternalProject.html#git
     GIT_TAG 7.0.0
     GIT_SHALLOW ${FETCHCONTENT_LIBXC_GIT_SHALLOW}
-    PATCH_COMMAND sed -i -e "s/p->info->family != XC_KINETIC/p->info->kind != XC_KINETIC/g" src/work_mgga_inc.c
+    PATCH_COMMAND "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_LIST_DIR}/cmake/patch_libxc_work_mgga.cmake"
   )
   set( Libxc_VERSION 7.0.0 )
 
@@ -98,12 +98,40 @@ else()
   endif()
 
   add_library( Libxc::xc ALIAS xc )
-  target_include_directories( xc 
-    PUBLIC 
+  target_include_directories( xc
+    PUBLIC
       $<BUILD_INTERFACE:${libxc_SOURCE_DIR}/src>
       $<BUILD_INTERFACE:${libxc_BINARY_DIR}/src>
       $<BUILD_INTERFACE:${libxc_BINARY_DIR}>
   )
+  if(MSVC)
+    # Suppress CRT deprecation warnings (strcpy, sscanf, etc.) in libxc C sources
+    target_compile_definitions( xc PRIVATE _CRT_SECURE_NO_WARNINGS )
+    target_compile_definitions( xc-threshold PRIVATE _CRT_SECURE_NO_WARNINGS )
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+      # Suppress warnings in auto-generated and upstream libxc C sources (clang-cl)
+      target_compile_options( xc PRIVATE
+        -Wno-logical-op-parentheses
+        -Wno-sometimes-uninitialized
+        -Wno-uninitialized
+        -Wno-unused-but-set-variable
+        -Wno-unused-const-variable
+        -Wno-unused-function
+        -Wno-unused-variable
+      )
+    else()
+      # Suppress warnings in auto-generated and upstream libxc C sources (cl.exe)
+      target_compile_options( xc PRIVATE
+        /wd4100  # unreferenced formal parameter
+        /wd4101  # unreferenced local variable
+        /wd4146  # unary minus on unsigned type
+        /wd4244  # conversion with possible loss of data (long double to double)
+        /wd4267  # conversion from size_t to int, possible loss of data
+        /wd4701  # potentially uninitialized local variable used
+        /wd4703  # potentially uninitialized local pointer variable used
+      )
+    endif()
+  endif()
   message( STATUS "Libxc Source: ${libxc_SOURCE_DIR}" )
 
   # disable unity builds for libxc

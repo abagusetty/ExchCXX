@@ -56,7 +56,7 @@ using namespace ExchCXX;
 
 TEST_CASE( "XCKernel Metadata Validity", "[xc-kernel]" ) {
 
-  const int npts = 1024;
+  const size_t npts = 1024;
 
   auto lda_kernel_test = Kernel::SlaterExchange;
   auto gga_kernel_test = Kernel::LYP;
@@ -65,7 +65,7 @@ TEST_CASE( "XCKernel Metadata Validity", "[xc-kernel]" ) {
   auto mgga_lapl_kernel_test = Kernel::R2SCANL_C;
   auto epc_lda_kernel_test   = Kernel::EPC17_2;
 
-  Backend backend;
+  Backend backend = Backend::builtin;
 
   SECTION( "Pure LDA Unpolarized" ) {
 
@@ -392,7 +392,7 @@ TEST_CASE( "XCKernel Metadata Validity", "[xc-kernel]" ) {
 
 TEST_CASE( "XCKernel Metadata Correctness", "[xc-kernel]" ) {
 
-  Backend backend;
+  Backend backend = Backend::builtin;
   SECTION( "LDA Kernels" ) {
 
     SECTION( "Libxc Backend" )   { backend = Backend::libxc; }
@@ -488,7 +488,7 @@ void kernel_test( TestInterface interface, Backend backend, Kernel kern,
       load_lda_reference_values( kern, polar ) :
       gen_lda_reference_values( backend,kern, polar );
 
-    size_t  npts     = ref_vals.npts;
+    int     npts     = ref_vals.npts;
     const auto&   rho      = ref_vals.rho;
     const auto&   exc_ref  = ref_vals.exc;
     const auto&   vrho_ref = ref_vals.vrho;
@@ -577,7 +577,7 @@ void kernel_test( TestInterface interface, Backend backend, Kernel kern,
       load_gga_reference_values( kern, polar ) :
       gen_gga_reference_values( backend,kern, polar );
 
-    size_t  npts       = ref_vals.npts;
+    int     npts       = ref_vals.npts;
     const auto&   sigma      = ref_vals.sigma;
     const auto&   rho        = ref_vals.rho;
     const auto&   exc_ref    = ref_vals.exc;
@@ -695,7 +695,7 @@ void kernel_test( TestInterface interface, Backend backend, Kernel kern,
     //auto ref_vals = 
     //  gen_mgga_reference_values( backend,kern, polar );
 
-    size_t  npts       = ref_vals.npts;
+    int     npts       = ref_vals.npts;
     const auto&   rho        = ref_vals.rho;
     const auto&   sigma      = ref_vals.sigma;
     const auto&   lapl       = ref_vals.lapl;
@@ -974,27 +974,27 @@ void compare_libxc_builtin( TestInterface interface, EvalType evaltype,
   REQUIRE( npts_lda == npts_mgga );
   REQUIRE( npts_lda == npts_lapl );
 
-  const int npts = npts_lda;
+  const int npts = static_cast<int>(npts_lda);
 
   XCKernel func_libxc  ( Backend::libxc,   kern, polar );
   XCKernel func_builtin( Backend::builtin, kern, polar );
 
 
-  const int len_rho   = func_libxc.rho_buffer_len( npts );
-  const int len_sigma = func_libxc.sigma_buffer_len( npts );
-  const int len_lapl = func_libxc.lapl_buffer_len( npts );
-  const int len_tau = func_libxc.tau_buffer_len( npts );
-  
-  const int len_v2rho2 = func_libxc.v2rho2_buffer_len( npts );
-  const int len_v2rhosigma = func_libxc.v2rhosigma_buffer_len( npts );
-  const int len_v2rholapl = func_libxc.v2rholapl_buffer_len( npts );
-  const int len_v2rhotau = func_libxc.v2rhotau_buffer_len( npts );
-  const int len_v2sigma2 = func_libxc.v2sigma2_buffer_len( npts );
-  const int len_v2sigmalapl = func_libxc.v2sigmalapl_buffer_len( npts );
-  const int len_v2sigmatau  = func_libxc.v2sigmatau_buffer_len( npts );
-  const int len_v2lapl2     = func_libxc.v2lapl2_buffer_len( npts );
-  const int len_v2lapltau = func_libxc.v2lapltau_buffer_len( npts );
-  const int len_v2tau2 = func_libxc.v2tau2_buffer_len( npts );
+  const size_t len_rho   = func_libxc.rho_buffer_len( npts );
+  const size_t len_sigma = func_libxc.sigma_buffer_len( npts );
+  const size_t len_lapl = func_libxc.lapl_buffer_len( npts );
+  const size_t len_tau = func_libxc.tau_buffer_len( npts );
+
+  const size_t len_v2rho2 = func_libxc.v2rho2_buffer_len( npts );
+  const size_t len_v2rhosigma = func_libxc.v2rhosigma_buffer_len( npts );
+  const size_t len_v2rholapl = func_libxc.v2rholapl_buffer_len( npts );
+  const size_t len_v2rhotau = func_libxc.v2rhotau_buffer_len( npts );
+  const size_t len_v2sigma2 = func_libxc.v2sigma2_buffer_len( npts );
+  const size_t len_v2sigmalapl = func_libxc.v2sigmalapl_buffer_len( npts );
+  const size_t len_v2sigmatau  = func_libxc.v2sigmatau_buffer_len( npts );
+  const size_t len_v2lapl2     = func_libxc.v2lapl2_buffer_len( npts );
+  const size_t len_v2lapltau = func_libxc.v2lapltau_buffer_len( npts );
+  const size_t len_v2tau2 = func_libxc.v2tau2_buffer_len( npts );
 
   std::vector<double> rho_small(len_rho, 1e-13);
   std::vector<double> sigma_small(len_sigma, 1e-14);

@@ -16,6 +16,14 @@ add_library( exchcxx ${EXCHCXX_SOURCES} )
 # TARGET properties
 
 target_compile_features( exchcxx PUBLIC cxx_std_17 )
+if(MSVC)
+  target_compile_definitions( exchcxx PUBLIC _USE_MATH_DEFINES )
+  target_compile_options( exchcxx PUBLIC /EHsc )  # standard C++ exception-handling model (required by STL and noexcept)
+  if(NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")  # cl only, not clang-cl
+    target_compile_options( exchcxx PRIVATE /permissive- )  # conformance mode — recognises C++ alternative tokens (not, and, or, …)
+    target_compile_options( exchcxx PUBLIC  /Zc:preprocessor )  # PUBLIC: public headers use NOTYPE empty macro; consumers need conforming preprocessor
+  endif()
+endif()
 if( EXCHCXX_ENABLE_LIBXC )
   target_link_libraries( exchcxx PUBLIC Libxc::xc )
 endif()
@@ -26,7 +34,6 @@ configure_file(
   ${PROJECT_BINARY_DIR}/include/exchcxx/exchcxx_config.hpp
 )
 target_compile_definitions( exchcxx PUBLIC "EXCHCXX_HAS_CONFIG_H=1" )
-
 
 
 # Device specific
@@ -43,7 +50,6 @@ if( EXCHCXX_ENABLE_SYCL )
 endif()
 
 
-
 target_include_directories( exchcxx
   PUBLIC
     $<INSTALL_INTERFACE:include>
@@ -53,7 +59,9 @@ target_include_directories( exchcxx
 )
 
 include( CheckCXXCompilerFlag )
-check_cxx_compiler_flag( -Wall              EXCHCXX_CXX_HAS_WALL              )
+if(NOT MSVC)  # under clang-cl, -Wall maps to /Wall (= -Weverything)
+  check_cxx_compiler_flag( -Wall              EXCHCXX_CXX_HAS_WALL              )
+endif()
 check_cxx_compiler_flag( -Wextra            EXCHCXX_CXX_HAS_WEXTRA            )
 check_cxx_compiler_flag( -Wpedantic         EXCHCXX_CXX_HAS_WPEDANTIC         )
 check_cxx_compiler_flag( -Wnon-virtual-dtor EXCHCXX_CXX_HAS_WNON_VIRTUAL_DTOR )
@@ -79,9 +87,9 @@ if( EXCHCXX_CXX_HAS_WSHADOW )
   target_compile_options( exchcxx PRIVATE $<$<COMPILE_LANGUAGE:CXX>: -Wshadow -Werror=shadow> )
 endif()
 
+
 # INSTALL rules
 add_library( ExchCXX::ExchCXX ALIAS exchcxx )
-
 
 include( GNUInstallDirs )
 set( INSTALL_CONFIGDIR ${CMAKE_INSTALL_LIBDIR}/cmake/ExchCXX )
@@ -92,7 +100,6 @@ install(TARGETS exchcxx
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
-
 
 set_target_properties( exchcxx PROPERTIES EXPORT_NAME ExchCXX )
 
