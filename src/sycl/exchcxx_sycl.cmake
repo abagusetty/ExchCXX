@@ -16,8 +16,17 @@ target_link_libraries( exchcxx PUBLIC SYCL::SYCL )
 
 # --- AoT-builds SYCL target alias pass-through ---
 # User-facing aliases
+#
+# spir64_x86_64 selects CPU AoT: the SPIR-V is compiled to x86 at build time
+# by opencl-aot (shipped with intel-oneapi-compiler-dpcpp-cpp) rather than
+# being JIT-compiled by the OpenCL CPU runtime at first kernel launch. Besides
+# moving that cost to build time, it keeps device codegen under the SYCL
+# toolchain's control, so -Xsycl-target-frontend flags such as
+# -fp-model=precise (applied below) actually govern the generated machine
+# code instead of being re-decided by the runtime JIT.
 set(_EXCHCXX_SYCL_ALLOWED
   intel_gpu_pvc
+  spir64_x86_64
   nvidia_gpu_sm_80
   nvidia_gpu_sm_90
   amd_gpu_gfx90a
@@ -46,6 +55,27 @@ if(DEFINED EXCHCXX_SYCL_TARGET AND NOT EXCHCXX_SYCL_TARGET STREQUAL "")
       "SHELL:-fsycl-targets=spir64_gen"
       "SHELL:-Xsycl-target-backend \"-device pvc\""
     )
+  elseif(EXCHCXX_SYCL_TARGET STREQUAL "spir64_x86_64")
+    # CPU AoT via opencl-aot. No -march is passed: opencl-aot then leaves
+    # CL_CONFIG_CPU_TARGET_ARCH unset and the resulting binary stays portable
+    # across x86_64 hosts, which matters for CI runners whose CPU model is not
+    # fixed (and may not even be Intel).
+    list(APPEND _exchcxx_sycl_compile_opts
+      -fsycl-targets=spir64_x86_64
+    )
+    list(APPEND _exchcxx_sycl_link_opts
+      "SHELL:-fsycl-targets=spir64_x86_64"
+    )
+  endif()
+
+  # Every allowlisted target must map to real flags. Without this an entry that
+  # is accepted above but has no branch here would silently produce a JIT build
+  # while still reporting "AoT enabled" below.
+  if(NOT _exchcxx_sycl_compile_opts)
+    message(FATAL_ERROR
+      "EXCHCXX_SYCL_TARGET='${EXCHCXX_SYCL_TARGET}' is allowed but has no "
+      "AoT flag mapping in ${CMAKE_CURRENT_LIST_FILE}; refusing to fall back "
+      "to a JIT build that would be reported as AoT.")
   endif()
 
   target_compile_options(exchcxx PRIVATE

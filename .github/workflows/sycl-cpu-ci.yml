@@ -58,6 +58,7 @@ jobs:
             -DCMAKE_C_COMPILER=icx \
             -DCMAKE_CXX_COMPILER=icpx \
             -DEXCHCXX_ENABLE_SYCL=ON \
+            -DEXCHCXX_SYCL_TARGET=spir64_x86_64 \
             -DBUILD_SHARED_LIBS=ON \
             -DEXCHCXX_ENABLE_TESTS=ON \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
