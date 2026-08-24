@@ -93,6 +93,7 @@ include(CheckCXXCompilerFlag)
 check_cxx_compiler_flag("-fno-sycl-id-queries-fit-in-int"     EXCHCXX_SYCL_ID_QUERIES_FIT_IN_INT )
 check_cxx_compiler_flag("-fsycl-device-code-split=per_kernel" EXCHCXX_SYCL_DEVICE_CODE_SPLIT_PER_KERNEL )
 check_cxx_compiler_flag("-Xsycl-target-frontend \"-fp-model=precise\"" EXCHCXX_HAVE_SYCL_TARGET_FRONTEND_FP_MODEL_PRECISE )
+check_cxx_compiler_flag("-fp-model=precise"                   EXCHCXX_HAVE_HOST_FP_MODEL_PRECISE )
 
 
 include(CheckLinkerFlag)
@@ -118,6 +119,19 @@ endif()
 if(EXCHCXX_HAVE_SYCL_TARGET_FRONTEND_FP_MODEL_PRECISE)
   target_compile_options(exchcxx PRIVATE
     "$<$<COMPILE_LANGUAGE:CXX>:SHELL:-Xsycl-target-frontend -fp-model=precise>"
+  )
+endif()
+
+# -Xsycl-target-frontend above only reaches the device compiler. icpx defaults
+# the *host* compilation to -fp-model=fast, which implies -fno-signed-zeros and
+# lets the compiler treat -0.0 and +0.0 as interchangeable. That is visible in
+# the host-side builtin evaluators: R2SCANL_C returns vlapl = -0.0 where libxc
+# (and GCC-built ExchCXX, which keeps signed zeros by default) returns +0.0.
+# Request the same IEEE semantics for host code so builtin and libxc results are
+# comparable regardless of which compiler built the library.
+if(EXCHCXX_HAVE_HOST_FP_MODEL_PRECISE)
+  target_compile_options(exchcxx PRIVATE
+    $<$<COMPILE_LANGUAGE:CXX>:-fp-model=precise>
   )
 endif()
 
