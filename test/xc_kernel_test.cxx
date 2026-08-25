@@ -2166,7 +2166,7 @@ T* safe_sycl_malloc( size_t n, sycl::queue& q ) {
 template <typename T>
 void safe_sycl_cpy( T* dest, const T* src, size_t len, sycl::queue& q ) {
 
-    q.memcpy( (void*)dest, (const void*)src, len*sizeof(T) );
+    q.memcpy( (void*)dest, (const void*)src, len*sizeof(T) ).wait();
 
 }
 

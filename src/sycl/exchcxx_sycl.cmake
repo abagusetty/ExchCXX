@@ -16,14 +16,6 @@ target_link_libraries( exchcxx PUBLIC SYCL::SYCL )
 
 # --- AoT-builds SYCL target alias pass-through ---
 # User-facing aliases
-#
-# spir64_x86_64 selects CPU AoT: the SPIR-V is compiled to x86 at build time
-# by opencl-aot (shipped with intel-oneapi-compiler-dpcpp-cpp) rather than
-# being JIT-compiled by the OpenCL CPU runtime at first kernel launch. Besides
-# moving that cost to build time, it keeps device codegen under the SYCL
-# toolchain's control, so -Xsycl-target-frontend flags such as
-# -fp-model=precise (applied below) actually govern the generated machine
-# code instead of being re-decided by the runtime JIT.
 set(_EXCHCXX_SYCL_ALLOWED
   intel_gpu_pvc
   spir64_x86_64
