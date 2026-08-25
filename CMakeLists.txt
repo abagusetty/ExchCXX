@@ -30,8 +30,43 @@ endif()
 
 
 if(EXCHCXX_ENABLE_SYCL)
-  # e.g. intel_gpu_pvc | nvidia_gpu_sm_80 | nvidia_gpu_sm_90 | amd_gpu_gfx90a | amd_gpu_gfx942
+  # e.g. intel_gpu_pvc | spir64_x86_64 | nvidia_gpu_sm_80 | nvidia_gpu_sm_90 | amd_gpu_gfx90a | amd_gpu_gfx942
   set(EXCHCXX_SYCL_TARGET "" CACHE STRING "Alias for -fsycl-targets (see Users Manual)")
+
+  # --- Host floating-point model ------------------------------------------
+  # icpx/icx default to -fp-model=fast, which implies -fno-signed-zeros and
+  # permits reassociation. GCC keeps signed zeros by default, so an
+  # icpx-built ExchCXX disagrees with a GCC-built one: R2SCANL_C returns
+  # vlapl = -0.0 where libxc returns +0.0, and Catch2's Approx separates the
+  # two. Ask for IEEE semantics instead.
+  #
+  # These are set as directory-scope flags rather than target_compile_options
+  # on exchcxx so that everything configured below inherits them:
+  #
+  #   * libxc, pulled in by FetchContent further down and compiled with icx.
+  #     It supplies the reference values the builtin kernels are compared
+  #     against, so it has to agree on FP semantics too.
+  #   * the exchcxx library itself.
+  #   * the unit tests and benchmarks, which do their own arithmetic on the
+  #     values returned by both backends.
+  #
+  # The device side is handled separately in src/sycl/exchcxx_sycl.cmake via
+  # -Xsycl-target-frontend; a plain -fp-model flag does not reach the SYCL
+  # device frontend.
+  #
+  # Both checks are guarded, so a SYCL build driven by a compiler without
+  # this spelling (e.g. open-source clang) is left alone.
+  include( CheckCCompilerFlag )
+  include( CheckCXXCompilerFlag )
+  check_c_compiler_flag  ( "-fp-model=precise" EXCHCXX_C_HAS_FP_MODEL_PRECISE   )
+  check_cxx_compiler_flag( "-fp-model=precise" EXCHCXX_CXX_HAS_FP_MODEL_PRECISE )
+
+  if( EXCHCXX_C_HAS_FP_MODEL_PRECISE )
+    set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fp-model=precise" )
+  endif()
+  if( EXCHCXX_CXX_HAS_FP_MODEL_PRECISE )
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fp-model=precise" )
+  endif()
 endif()
 
 
