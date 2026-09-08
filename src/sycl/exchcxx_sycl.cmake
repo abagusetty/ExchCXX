@@ -70,10 +70,10 @@ if(DEFINED EXCHCXX_SYCL_TARGET AND NOT EXCHCXX_SYCL_TARGET STREQUAL "")
       "to a JIT build that would be reported as AoT.")
   endif()
 
-  target_compile_options(exchcxx PRIVATE
+  target_compile_options(exchcxx PUBLIC
     $<$<COMPILE_LANGUAGE:CXX>:${_exchcxx_sycl_compile_opts}>
   )
-  target_link_options(exchcxx PRIVATE
+  target_link_options(exchcxx PUBLIC
     ${_exchcxx_sycl_link_opts}
   )
 
@@ -99,10 +99,10 @@ if(EXCHCXX_SYCL_ID_QUERIES_FIT_IN_INT)
 endif()
 
 if(EXCHCXX_SYCL_DEVICE_CODE_SPLIT_PER_KERNEL)
-  target_compile_options(exchcxx PRIVATE
+  target_compile_options(exchcxx PUBLIC
     $<$<COMPILE_LANGUAGE:CXX>:-fsycl-device-code-split=per_kernel>
   )
-  target_link_options(exchcxx PRIVATE
+  target_link_options(exchcxx PUBLIC
     $<$<LINK_LANGUAGE:CXX>:-fsycl-device-code-split=per_kernel>
   )
 endif()
